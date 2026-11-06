@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -17,6 +17,7 @@ import { GameSummary, Genre } from '../../models/game.model';
 export class GameListComponent implements OnInit {
   private gameService = inject(GameService);
   private genreService = inject(GenreService);
+  private cdr = inject(ChangeDetectorRef);
 
   games: GameSummary[] = [];
   genres: Genre[] = [];
@@ -42,6 +43,7 @@ export class GameListComponent implements OnInit {
   loadData(): void {
     this.isLoading = true;
     this.errorMessage = null;
+    this.cdr.markForCheck();
 
     forkJoin({
       games: this.gameService.getGames(),
@@ -51,11 +53,13 @@ export class GameListComponent implements OnInit {
         this.games = games;
         this.genres = genres;
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Failed to load catalog data:', err);
         this.errorMessage = 'Could not load games. Please make sure the backend API is running.';
         this.isLoading = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -100,18 +104,22 @@ export class GameListComponent implements OnInit {
   openDeleteModal(game: GameSummary): void {
     this.gameToDelete = game;
     this.isDeleteModalOpen = true;
+    this.cdr.markForCheck();
   }
 
   closeDeleteModal(): void {
     if (this.isDeleting) return;
     this.isDeleteModalOpen = false;
     this.gameToDelete = null;
+    this.cdr.markForCheck();
   }
 
   confirmDelete(): void {
     if (!this.gameToDelete) return;
 
     this.isDeleting = true;
+    this.cdr.markForCheck();
+
     const gameId = this.gameToDelete.id;
     const gameName = this.gameToDelete.name;
 
@@ -121,20 +129,24 @@ export class GameListComponent implements OnInit {
         this.isDeleting = false;
         this.closeDeleteModal();
         this.showSuccess(`"${gameName}" was deleted successfully.`);
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Failed to delete game:', err);
         this.isDeleting = false;
         this.errorMessage = `Failed to delete "${gameName}". Please try again.`;
+        this.cdr.markForCheck();
       }
     });
   }
 
   showSuccess(message: string): void {
     this.successMessage = message;
+    this.cdr.markForCheck();
     setTimeout(() => {
       if (this.successMessage === message) {
         this.successMessage = null;
+        this.cdr.markForCheck();
       }
     }, 4000);
   }
@@ -142,6 +154,7 @@ export class GameListComponent implements OnInit {
   dismissAlert(): void {
     this.successMessage = null;
     this.errorMessage = null;
+    this.cdr.markForCheck();
   }
 
   getGenreBadgeClass(genre: string): string {

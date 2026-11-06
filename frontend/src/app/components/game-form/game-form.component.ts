@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -19,6 +19,7 @@ export class GameFormComponent implements OnInit {
   private router = inject(Router);
   private gameService = inject(GameService);
   private genreService = inject(GenreService);
+  private cdr = inject(ChangeDetectorRef);
 
   gameForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(50)]],
@@ -49,16 +50,20 @@ export class GameFormComponent implements OnInit {
     this.genreService.getGenres().subscribe({
       next: (genres) => {
         this.genres = genres;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Failed to load genres:', err);
         this.errorMessage = 'Failed to load genres from backend.';
+        this.cdr.markForCheck();
       }
     });
   }
 
   loadGame(id: number): void {
     this.isLoading = true;
+    this.cdr.markForCheck();
+
     this.gameService.getGame(id).subscribe({
       next: (game) => {
         this.gameForm.patchValue({
@@ -68,11 +73,13 @@ export class GameFormComponent implements OnInit {
           releaseDate: game.releaseDate
         });
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Failed to fetch game details:', err);
         this.errorMessage = `Could not load game with ID ${id}.`;
         this.isLoading = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -85,6 +92,7 @@ export class GameFormComponent implements OnInit {
 
     this.isSaving = true;
     this.errorMessage = null;
+    this.cdr.markForCheck();
 
     const formValue = this.gameForm.value;
     const payload = {
@@ -98,24 +106,28 @@ export class GameFormComponent implements OnInit {
       this.gameService.updateGame(this.gameId, payload).subscribe({
         next: () => {
           this.isSaving = false;
+          this.cdr.markForCheck();
           this.router.navigate(['/games']);
         },
         error: (err) => {
           console.error('Failed to update game:', err);
           this.isSaving = false;
           this.errorMessage = this.extractErrorMessage(err) || 'Failed to update game. Please check your inputs.';
+          this.cdr.markForCheck();
         }
       });
     } else {
       this.gameService.createGame(payload).subscribe({
         next: () => {
           this.isSaving = false;
+          this.cdr.markForCheck();
           this.router.navigate(['/games']);
         },
         error: (err) => {
           console.error('Failed to create game:', err);
           this.isSaving = false;
           this.errorMessage = this.extractErrorMessage(err) || 'Failed to create game. Please check your inputs.';
+          this.cdr.markForCheck();
         }
       });
     }
