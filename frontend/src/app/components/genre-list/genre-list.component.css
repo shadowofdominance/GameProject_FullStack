@@ -1,0 +1,21 @@
+.genre-item {
+  transition: all 0.2s ease;
+  border-color: #e2e8f0 !important;
+}
+
+.genre-item:hover {
+  border-color: #6366f1 !important;
+  background-color: #f8fafc !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}

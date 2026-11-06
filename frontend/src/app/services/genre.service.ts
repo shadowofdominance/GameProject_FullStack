@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Genre } from '../models/game.model';
+import { CreateGenre, Genre } from '../models/game.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -13,5 +13,13 @@ export class GenreService {
 
   getGenres(): Observable<Genre[]> {
     return this.http.get<Genre[]>(this.apiUrl);
+  }
+
+  createGenre(genre: CreateGenre): Observable<Genre> {
+    return this.http.post<Genre>(this.apiUrl, genre);
+  }
+
+  deleteGenre(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
