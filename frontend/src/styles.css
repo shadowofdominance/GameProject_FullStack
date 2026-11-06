@@ -1,0 +1,52 @@
+/* Import Bootstrap and Bootstrap Icons */
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* Global custom styles */
+:root {
+  --primary-accent: #6366f1;
+  --primary-accent-hover: #4f46e5;
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+body {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #1e293b;
+}
+
+/* Card hover animation */
+.game-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+}
+
+.game-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Badge styling */
+.badge-genre {
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #4338ca;
+  border-color: #4338ca;
+}
+
+/* Modal backdrop polish */
+.modal-backdrop.show {
+  opacity: 0.55;
+}
